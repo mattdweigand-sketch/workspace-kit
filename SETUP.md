@@ -7,9 +7,9 @@ organization's one-time orientation, builds workspaces, keeps the operating-syst
 (when the organization is ready) finalizes the repository into the organization's own AI operating
 system.
 
-You did not start here. Claude Code auto-loads `CLAUDE.md`, not this file. The root `CLAUDE.md`
-is a thin bootstrap that sends you here when setup has not run yet. From here on, this file is
-the machinery; `CLAUDE.md` is the artifact.
+You did not start here. `AGENTS.md` is canonical. Codex and other AGENTS-aware tools read it
+directly. Claude Code auto-loads `CLAUDE.md`, which is only a thin wrapper that imports
+`AGENTS.md`. From here on, this file is the machinery; `AGENTS.md` is the artifact.
 
 Read this file first, then navigate to the specific files each step calls for. Do not load
 everything at once. That is the whole point of the toolkit.
@@ -41,7 +41,8 @@ plus worked examples from different industries so you can see a finished one. It
 
 The architectures and builders tag every file with a context layer (L0–L4) under the
 Interpreted Context Methodology (ICM). The layer says *when* a file loads: L0 the
-always-loaded map (`CLAUDE.md`), L1 routing (`CONTEXT.md`), L2 the per-task stage contract,
+always-loaded map (`AGENTS.md` at the root, `CLAUDE.md` inside legacy workspace templates),
+L1 routing (`CONTEXT.md`), L2 the per-task stage contract,
 L3 reference the model should follow (voice, standards), and L4 working files the model
 should transform (source data, drafts). The discipline is to load only what a step needs, and
 to keep "rules to follow" (L3) distinct from "content to transform" (L4) so the model does
@@ -53,6 +54,32 @@ The word *layer* shows up in two unrelated ways across this toolkit; keep them s
 layers (60/30/10)**, named in the constraint routing table below, describe *what kind of tool*
 should solve a problem — traditional software, a rule-based system, or a language model. Same
 word, different question.
+
+## Context Matrix
+
+The matrix below is the load contract for setup. It says what to read for each shape, and at what
+depth, before a builder starts asking diagnostic questions. It complements the context-layer tags:
+ICM says *when* a file loads; this matrix says *how much* shared context a builder needs.
+
+Load levels:
+- **full:** read the whole file.
+- **summary:** use only the relevant digest or top-line facts.
+- **section:** read only the named section.
+- **pointer:** know the file exists; open it only when the builder or current answer requires it.
+- **writes:** the builder creates or updates this file.
+- **none:** do not load.
+
+| Shape | `_shared-config/org-profile.md` | `_shared-config/voice-and-tone.md` | `_shared-config/learnings.md` | Constraints | Architecture | Builder |
+|---|---|---|---|---|---|---|
+| `gated-decision-pipeline` | full | summary | `## General`, `## gated-decision-pipeline` | routed list | pointer | full |
+| `recurring-operations-queue` | full | full when responses leave the team | `## General`, `## recurring-operations-queue` | routed list | pointer | full |
+| `recurring-document-production` | full | full | `## General`, `## recurring-document-production` | routed list | pointer | full |
+| `learning-loop` | full | summary | `## General`, `## learning-loop` | routed list | pointer | full |
+| `build-from-scratch` | full | full when writing | `## General`, `## build-from-scratch` | routed list | none | full |
+
+Load only what the matrix names. Do not open every constraint, every architecture, or all of
+`_shared-config/` because it feels safer. If a build truly needs extra context, say why, then load
+the smallest file or section that answers the question.
 
 ## Run Setup / Add a Workflow
 
@@ -66,7 +93,7 @@ This is the entry point. When the user says **"Run setup"**, **"add a workflow"*
    - **No (first-time setup):** run **Organization Orientation** (below), then **The Onboarding
      Sequence** to build the first workspace, then write `_shared-config/setup-progress.md`
      recording what was built, then run **After First Setup: Write the OS Map** to turn the root
-     `CLAUDE.md` into the organization's operating-system map.
+     `AGENTS.md` into the organization's operating-system map.
    - **Yes (returning):** read `_shared-config/org-profile.md` and
      `_shared-config/setup-progress.md`, greet the organization by name, summarize what has been
      built, and offer to add another workflow, set up another instance of one already built, update
@@ -74,6 +101,11 @@ This is the entry point. When the user says **"Run setup"**, **"add a workflow"*
      "add a workflow," and "build a &lt;workflow&gt;" are all the same add-a-workflow intent on
      this path. After the build, run **Keeping the OS Map Current**.
 2. Always ask before building, and stop with a working, populated workspace the organization can use.
+
+Do not make onboarding feel like a form. Ask one question at a time, skip anything already answered
+in a prior response, and acknowledge the skip briefly so the user knows you heard it. When the
+user's answer clearly maps to a shape, recommend that shape and explain why. Show the full shape
+menu only if the user asks for it or the mapping is genuinely ambiguous.
 
 ### Organization Orientation (first run only)
 
@@ -107,9 +139,11 @@ Run these steps in order. Each one names the file to read or run next.
    to one of the four shapes using the routing table below. If they name more than one, handle the
    highest-priority workflow first and return for the others. Do not build them all at once.
 
-2. **Pick the skill-starter.** Open the matching builder in `skill-starters/` (root before
-   finalize, `_kit/skill-starters/` after). It is the instruction set for the build. Do not
-   improvise a workspace; the builder's diagnostic questions are the work.
+2. **Pick the skill-starter.** Check the **Context Matrix** for the shape, then open the matching
+   builder in `skill-starters/` (root before finalize, `_kit/skill-starters/` after). It is the
+   instruction set for the build. Do not improvise a workspace; the builder's diagnostic questions
+   are the work. Load only the org profile, voice, learnings, constraints, and architecture files
+   named by the matrix and routing table.
 
 3. **Run the diagnostic interview.** Ask the builder's questions one at a time. Wait for each
    answer. The answers become the content of the workspace. Do not skip ahead to assembly.
@@ -229,13 +263,38 @@ Onboarding is done when every item below is true. Report each as pass or open.
 If any box is open, return to the step that produces it. A half-built workspace handed off as
 "done" is the failure mode this checklist exists to prevent.
 
+## After a Build
+
+Ask: "Anything about this workflow setup that should be remembered for next time?"
+
+If yes, write the reusable rule to `_shared-config/learnings.md` under the matching shape section.
+If the lesson applies across shapes, write it under `## General`. Do not write task logs here. Good
+entries name the date, the reusable rule, and the evidence for it. Bad entries merely say what was
+built.
+
+## Registry Reconciliation
+
+Before adding or modifying a shape or builder, compare:
+- `architectures/<shape>/`
+- `skill-starters/<shape>-builder.md`
+- `skill-starters/build-from-scratch.md`
+- the Diagnose -> Route table
+- the Constraint Routing table
+- the README shape list
+
+If a shape exists on disk but is missing from the tables, add it silently and report what changed.
+
+If a shape is listed in the tables but missing on disk, stop and ask before removing it from docs.
+
 ## After First Setup: Write the OS Map
 
 At the end of the **first** setup — after the first workspace is built and
-`_shared-config/setup-progress.md` is written — overwrite the root `CLAUDE.md` with the
-operating-system map below. This is the content metamorphosis: the entry file stops being a
-toolkit bootstrap and becomes the organization's own OS map. It is safe and automatic — nothing of
-value is lost, because the machinery already lives here in `SETUP.md`.
+`_shared-config/setup-progress.md` is written — overwrite the root `AGENTS.md` with the
+operating-system map below. `AGENTS.md` is canonical. `CLAUDE.md` stays a thin Claude Code wrapper
+that imports `AGENTS.md`; do not duplicate project instructions there. This is the content
+metamorphosis: the canonical instruction file stops being a toolkit bootstrap and becomes the
+organization's own OS map. It is safe and automatic — nothing of value is lost, because the
+machinery already lives here in `SETUP.md`.
 
 Fill the parametric fields from the organization's files:
 - `{ORG_NAME}` — from `_shared-config/org-profile.md`.
@@ -252,14 +311,18 @@ Write exactly this structure (substituting the fields):
 ```markdown
 # {ORG_NAME} — AI Operating System
 
+`AGENTS.md` is canonical. Codex and other AGENTS-aware tools read it directly. Claude Code reads
+it through the thin `CLAUDE.md` wrapper. Do not duplicate project instructions in `CLAUDE.md`.
+
 This repository is {ORG_NAME}'s operating system for working with AI. It was set up from the
 Kit, and it keeps growing: you can add workflows at any time. The toolkit machinery —
 the setup engine and the library of workflow shapes — lives at {KIT_LOCATION} and runs whenever
 you add or change a workflow.
 
 ## How this repository is organized
-- `_shared-config/` — the organization, captured once: `org-profile.md` and `voice-and-tone.md`.
-  Every workspace reads these. This is the org-level context that is true regardless of workflow.
+- `_shared-config/` — the organization, captured once: `org-profile.md`, `voice-and-tone.md`, and
+  `learnings.md`. Every workspace reads these by contract. This is the org-level context that is
+  true regardless of workflow.
 - `workspaces/` — your live workspaces. Each has its own `CLAUDE.md` that maps it; open the
   workspace folder and read that file to work in it.
 - The toolkit, at {KIT_LOCATION} — the setup engine (`SETUP.md`) and the workflow library
@@ -286,11 +349,11 @@ Shapes still available to build:
 ## Working in a workspace
 
 To use a workspace that already exists, open its folder and read its `CLAUDE.md` — that file is
-the map for that workspace. This file is the map for the organization.
+the map for that workspace. `AGENTS.md` is the map for the organization.
 
 ## A note on the `L0`–`L4` tags you'll see
 Files across the workspaces are tagged with a context layer, which just says *when* the file is
-meant to be read: **L0** the always-on map (`CLAUDE.md`), **L1** the workflow router (`CONTEXT.md`),
+meant to be read: **L0** the always-on map (`AGENTS.md` at the root), **L1** the workflow router (`CONTEXT.md`),
 **L2** a single step's instructions (a stage `CONTEXT.md`), **L3** reference the model follows
 (voice, rules, schemas), **L4** the working files it transforms (source data, drafts). You do not
 have to manage these; they are there so each step loads only what it needs.
@@ -305,7 +368,7 @@ build (the two must always agree). Use exactly this structure so it stays consis
 # Setup Progress — {ORG_NAME}
 
 Records what has been built from the Kit. The existence of this file is the signal that
-first-time setup has already run. This file and the OS-map `CLAUDE.md` must always agree.
+first-time setup has already run. This file and the OS-map `AGENTS.md` must always agree.
 
 ## Organization
 - {ORG_NAME} — {one-line description}. Orientation completed: {YYYY-MM-DD}.
@@ -328,7 +391,7 @@ can run whenever they want the repo root to read purely as their operating syste
 
 ## Keeping the OS Map Current
 
-After **every** subsequent build (on the returning path), refresh the root `CLAUDE.md`:
+After **every** subsequent build (on the returning path), refresh the root `AGENTS.md`:
 - Add the new workspace to the **Workspaces built** list (`{BUILT_LIST}`).
 - Remove that shape from **Shapes still available to build** (`{AVAILABLE_LIST}`) the *first* time
   that shape is built, and never re-add it. Building a second instance of an already-built shape
@@ -344,7 +407,8 @@ setup-progress.md must always agree on what has been built.
 
 Finalize is an **explicit, reversible** step the organization runs when it wants the repo root to
 read purely as its operating system, with the toolkit tucked out of the way. It is a near-pure
-folder move — by this point `CLAUDE.md` is already the OS map, so there is no entry-file rewrite.
+folder move — by this point `AGENTS.md` is already the OS map, so only its toolkit paths change.
+`CLAUDE.md` remains the wrapper.
 
 Run finalize **only when the user explicitly asks** ("finalize," "make this our operating system,"
 "tuck the toolkit away"). Never finalize automatically, and never finalize the source toolkit repo
@@ -354,8 +418,8 @@ Steps:
 1. Create `_kit/` at the repo root.
 2. Move the toolkit into it: `SETUP.md`, `architectures/`, `constraints/`, and `skill-starters/`
    all move into `_kit/`. (This file becomes `_kit/SETUP.md`.) Do **not** move `_shared-config/`,
-   `workspaces/`, `CLAUDE.md`, `README.md`, or `LICENSE` — those stay at the root.
-3. Update the OS-map `CLAUDE.md`: change `{KIT_POINTER}` from `SETUP.md` to `_kit/SETUP.md`, and
+   `workspaces/`, `AGENTS.md`, `CLAUDE.md`, `README.md`, or `LICENSE` — those stay at the root.
+3. Update the OS-map `AGENTS.md`: change `{KIT_POINTER}` from `SETUP.md` to `_kit/SETUP.md`, and
    change **both occurrences** of `{KIT_LOCATION}` from `the repo root` to `` `_kit/` ``.
 4. Write `_kit/RESTORE.md` from the template below.
 5. Update `README.md`: anywhere it locates the toolkit folders (`architectures/`, `constraints/`,
@@ -380,14 +444,15 @@ root reads as the organization's operating system. This file reverses that move.
 
 ## What finalize did
 - Moved `SETUP.md`, `architectures/`, `constraints/`, and `skill-starters/` into `_kit/`.
-- Updated `CLAUDE.md` (the OS map) so "add a workflow" points to `_kit/SETUP.md`.
+- Updated `AGENTS.md` (the OS map) so "add a workflow" points to `_kit/SETUP.md`.
+- Left `CLAUDE.md` as a thin Claude Code wrapper that imports `AGENTS.md`.
 - Noted in `README.md` that the toolkit folders now live under `_kit/`.
 - Recorded the finalize in `_shared-config/setup-progress.md`.
 
 ## To restore the original root layout
 1. Move the four items back to the repo root:
    `mv _kit/SETUP.md _kit/architectures _kit/constraints _kit/skill-starters .`
-2. In `CLAUDE.md`, change the kit pointer from `_kit/SETUP.md` back to `SETUP.md`, and change
+2. In `AGENTS.md`, change the kit pointer from `_kit/SETUP.md` back to `SETUP.md`, and change
    both kit-location mentions from `_kit/` back to `the repo root`.
 3. In `README.md`, remove the `_kit/` note so it again locates the toolkit at the repo root.
 4. Note the reversal in `_shared-config/setup-progress.md`.
@@ -404,7 +469,7 @@ The constraints are the principles. The architectures are worked examples of tho
 applied to a workflow shape. The skill-starters turn a shape into a customized workspace for one
 organization. You move left to right: understand the constraint, study the shape, run the builder.
 Each workspace, once built, is self-documenting — its own `CLAUDE.md` is the map for that workspace,
-the same way the root `CLAUDE.md` is the map for the organization.
+the same way the root `AGENTS.md` is the map for the organization.
 
 A note on support-folder naming: every workspace has a `_config/` (the organization's own rules,
 voice, and terms). The second support folder is named for the job that workspace does, not by

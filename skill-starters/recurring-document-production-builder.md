@@ -12,6 +12,8 @@ When you produce reader-facing communications on a recurring cycle (recurring re
 
 > **Org facts are already captured.** Run Setup wrote the organization's name, domain, systems of record, team, and voice to `_shared-config/` (org-profile.md and voice-and-tone.md). Read those first. Do NOT re-ask org-level facts — confirm them if needed. Ask only the workflow-specific questions below. If `_shared-config/org-profile.md` does not exist yet, the team skipped orientation; capture the basics first, then continue.
 
+> **Learnings compound.** Before asking diagnostic questions, read `_shared-config/learnings.md`, but only `## General` and `## recurring-document-production`. Apply reusable rules. Ignore task history.
+
 Before creating any files, ask the user the following questions one at a time. Wait for each answer before proceeding.
 
 **Question 1: What do you produce, on what cycle?**

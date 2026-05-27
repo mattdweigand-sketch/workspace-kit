@@ -12,6 +12,8 @@ This is the fallback. Reach for it when someone hands you a folder of files of u
 
 > **Org facts are already captured.** Run Setup wrote the organization's name, domain, systems of record, team, and voice to `_shared-config/` (org-profile.md and voice-and-tone.md). Read those first. Do NOT re-ask org-level facts — confirm them if needed. Ask only the workflow-specific questions below. If `_shared-config/org-profile.md` does not exist yet, the team skipped orientation; capture the basics first, then continue.
 
+> **Learnings compound.** Before asking diagnostic questions, read `_shared-config/learnings.md`, but only `## General` and `## build-from-scratch`. Apply reusable rules. Ignore task history.
+
 Ask the following questions one at a time. Wait for each answer.
 
 **Question 1: What is the deliverable?**

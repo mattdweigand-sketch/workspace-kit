@@ -24,6 +24,15 @@ Whatever your environment supports for separating information is your implementa
 
 The question is always the same: does this piece of information belong at this step, or am I just carrying it because I do not know where else to put it?
 
+## How the layers stay separate
+
+The toolkit keeps methodology, organization context, and live workflow context in different places:
+
+- `_shared-config/` is organization-level truth: the org profile, voice, setup progress, and reusable learnings.
+- `workspaces/` is workflow-level operating context: the live pipeline, queue, cycle, or learning loop.
+- `architectures/`, `constraints/`, and `skill-starters/` are toolkit methodology: the reusable shapes, principles, and builders.
+- After finalize, methodology moves to `_kit/`; organization context and live workspaces stay visible at the root.
+
 ## Most work is not an AI task
 
 Roughly 60% of what people throw at AI is better handled by traditional software, databases, or an established process. Another 30% suits rule-based automation or a prebuilt routine. Only about 10% genuinely needs the judgment a language model brings.
@@ -48,7 +57,15 @@ Two caveats. Whatever AI tool you use sends the context it reads to that tool's 
 
 Setup asks a few questions about your organization and builds your first workspace; later, say `add a workflow` to build another. You never open or edit a file yourself.
 
-**Any agentic tool works:** Claude Code, Cursor, Codex, Copilot (agent mode), or the Gemini CLI. Anything that can read this repo and act on it qualifies. Claude Code loads `CLAUDE.md` for you; in the others, tell the agent to read `CLAUDE.md` first. A plain browser chat (ChatGPT, Gemini) cannot run setup, but can still use the reference material below.
+**Any agentic tool works:** Claude Code, Cursor, Codex, Copilot (agent mode), or the Gemini CLI. Anything that can read this repo and act on it qualifies. A plain browser chat (ChatGPT, Gemini) cannot run setup, but can still use the reference material below.
+
+### Agent startup files
+
+`AGENTS.md` is canonical. Codex, Cursor, Copilot agent mode, Gemini CLI, and other AGENTS-aware tools should read `AGENTS.md` first.
+
+`CLAUDE.md` exists only for Claude Code compatibility. Claude Code loads it, then follows its `@AGENTS.md` import.
+
+Do not copy project instructions into `CLAUDE.md`. If setup or finalize rewrites the operating map, it rewrites `AGENTS.md`.
 
 Everything below is background you can skip.
 
@@ -64,11 +81,16 @@ You keep building exactly as before: "add a workflow" still works, it just pulls
 
 ## What is in here
 
-At the root are three folders, plus two files that run the toolkit and that you never edit: `CLAUDE.md` (what your agent reads first) and `SETUP.md` (the engine that builds and adds workflows). Setup creates a `workspaces/` folder for the workflows you build.
+At the root are the toolkit folders, shared organization config, plus three files that run the
+toolkit and that you rarely edit directly: `AGENTS.md` (canonical project instructions and
+operating map), `CLAUDE.md` (Claude Code wrapper only), and `SETUP.md` (the engine that builds and
+adds workflows). Setup creates a `workspaces/` folder for the workflows you build.
 
 ```
-CLAUDE.md        your agent reads this first
+AGENTS.md        canonical instructions and operating map
+CLAUDE.md        thin Claude Code wrapper that imports AGENTS.md
 SETUP.md         the engine that builds and adds workflows
+_shared-config/  org profile, voice, setup progress, and learnings
 constraints/     the principles (10 files)
 architectures/   the four shapes + worked examples
 skill-starters/  the builders setup runs (5)

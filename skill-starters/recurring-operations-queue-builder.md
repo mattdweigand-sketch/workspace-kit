@@ -12,6 +12,8 @@ When a team handles a steady stream of ad hoc questions and soft requests and wa
 
 > **Org facts are already captured.** Run Setup wrote the organization's name, domain, systems of record, team, and voice to `_shared-config/` (org-profile.md and voice-and-tone.md). Read those first. Do NOT re-ask org-level facts — confirm them if needed. Ask only the workflow-specific questions below. If `_shared-config/org-profile.md` does not exist yet, the team skipped orientation; capture the basics first, then continue.
 
+> **Learnings compound.** Before asking diagnostic questions, read `_shared-config/learnings.md`, but only `## General` and `## recurring-operations-queue`. Apply reusable rules. Ignore task history.
+
 Ask the following questions one at a time. Wait for each answer before proceeding.
 
 **Question 1: What type of request arrives repeatedly?**
